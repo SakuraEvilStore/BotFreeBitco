@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Bot Freebitco Extension</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Loading Bootstrap -->
+    <link href="css/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Loading Flat UI -->
+    <link href="css/flat-ui.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="img/favicon.ico">
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
+    <!--[if lt IE 9]>
+      <script src="js/vendor/html5shiv.js"></script>
+      <script src="js/vendor/respond.min.js"></script>
+      <![endif]-->
+    <style>
+        .form-group {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" id="customjs" style="width:650px; padding-bottom: 20px;">
+        <form action="" method="post" accept-charset="utf-8" id="popup-form" class="pure-form">
+            <h4>Bot Setting</h4>
+            <div class="form-group row">
+                <label class="col-xs-3 control-label" for="auto-type">Bot Type</label>
+                <div class="col-xs-9">
+                    <select class="form-control select select-primary select-block mbl" id="auto-type" name="auto-type">
+                     <option value="0">Bet Hi</option>
+                     <option value="1">Bet Lo</option>
+                     <option value="2">Smart Bet</option>
+                  </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-xs-3 control-label" for="bet-amount">Bet Amount</label>'
+                <div class="col-xs-3">
+                    <input id="bet-amount" name="bet-amount" type="text" class="form-control input-sm" style="color: black;" disabled/>
+                </div>
+                <div class="col-xs-5">
+                    <div id="bet-amount-slide" style="margin-top: 12px;"></div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-xs-3 control-label" for="double-if-lost">Up Amount If Lost</label>
+                <div class="col-xs-9">
+                    <div class="bootstrap-switch-square">
+                        <input type="checkbox" checked data-toggle="switch" name="double-if-lost" id="double-if-lost" />
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-xs-3 control-label" for="max-bet-amount">Max Bet Amount</label>
+                <div class="col-xs-3">
+                    <input id="max-bet-amount" name="max-bet-amount" type="text" class="form-control input-sm" style="color: black;" disabled/>
+                </div>
+                <div class="col-xs-5">
+                    <div id="max-bet-amount-slide" style="margin-top: 12px;"></div>
+                </div>
+            </div>
+            <input id="save-setting" class="btn btn-embossed btn-primary" type="submit" value="Save Setting">
+            </input>
+        </form>
+    </div>
+    <!-- /.container -->
+    <!-- jQuery (necessary for Flat UI's JavaScript plugins) -->
+    <script src="js/vendor/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/vendor/video.js"></script>
+    <script src="js/flat-ui.min.js"></script>
+    <script src="js/popup.js"></script>
+</body>
+
+</html>
