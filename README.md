@@ -1,9 +1,11 @@
 BotFreeBitco
 ========
 Setting Srceen:
+
 ![alt text](https://raw.githubusercontent.com/SakuraEvilStore/BotFreeBitco/master/img/srceen.PNG)
 
 Auto Srceen:
+
 ![alt text](https://raw.githubusercontent.com/SakuraEvilStore/BotFreeBitco/master/img/auto_srceen.PNG)
 
 New features:
