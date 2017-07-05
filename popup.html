@@ -14,7 +14,7 @@
     <!--[if lt IE 9]>
       <script src="js/vendor/html5shiv.js"></script>
       <script src="js/vendor/respond.min.js"></script>
-      <![endif]-->
+    <![endif]-->
     <style>
         .form-group {
             margin-bottom: 5px;
@@ -46,14 +46,6 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label class="col-xs-3 control-label" for="double-if-lost">Up Amount If Lost</label>
-                <div class="col-xs-9">
-                    <div class="bootstrap-switch-square">
-                        <input type="checkbox" checked data-toggle="switch" name="double-if-lost" id="double-if-lost" />
-                    </div>
-                </div>
-            </div>
-            <div class="form-group row">
                 <label class="col-xs-3 control-label" for="max-bet-amount">Max Bet Amount</label>
                 <div class="col-xs-3">
                     <input id="max-bet-amount" name="max-bet-amount" type="text" class="form-control input-sm" style="color: black;" disabled/>
@@ -62,8 +54,24 @@
                     <div id="max-bet-amount-slide" style="margin-top: 12px;"></div>
                 </div>
             </div>
-            <input id="save-setting" class="btn btn-embossed btn-primary" type="submit" value="Save Setting">
-            </input>
+            <div class="form-group row">
+                <label class="col-xs-3 control-label" for="max-lost">Max Lost</label>
+                <div class="col-xs-3">
+                    <input id="max-lost" name="max-lost" type="text" class="form-control input-sm" style="color: black;" disabled/>
+                </div>
+                <div class="col-xs-5">
+                    <div id="max-lost-slide" style="margin-top: 12px;"></div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-xs-3">
+                    <input id="save-setting" class="btn btn-embossed btn-primary" type="submit" value="Save Setting"></input>
+                </div>
+                <div class="col-xs-9" style="text-align: right;margin-top: 10px;">
+                    <span style="color: black;">Copyright 2017 SakuraEvilStore</span>
+                </div>
+            </div>
+            <select id="host" name="host" style="display: none"></select>
         </form>
     </div>
     <!-- /.container -->

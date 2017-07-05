@@ -1,5 +1,5 @@
-$.fn.addSliderSegments = function(amount, orientation) {
-    return this.each(function() {
+$.fn.addSliderSegments = function (amount, orientation) {
+    return this.each(function () {
         if (orientation == "vertical") {
             var output = '',
                 i;
@@ -15,7 +15,7 @@ $.fn.addSliderSegments = function(amount, orientation) {
     });
 };
 
-(function($) {
+(function ($) {
     $("select").select2({
         dropdownCssClass: 'dropdown-inverse'
     });
@@ -28,10 +28,10 @@ $.fn.addSliderSegments = function(amount, orientation) {
             value: 0.00000001 * 100000000,
             orientation: "horizontal",
             range: "min",
-            create: function() {
+            create: function () {
                 $bet_amount.val(($(this).slider("value") / 100000000).toFixed(8));
             },
-            slide: function(event, ui) {
+            slide: function (event, ui) {
                 $bet_amount.val((ui.value / 100000000).toFixed(8));
             }
         }).addSliderSegments($bet_amount_slide.slider("option").max);
@@ -42,19 +42,34 @@ $.fn.addSliderSegments = function(amount, orientation) {
         $max_bet_amount_slide.slider({
             min: 0.00000001 * 100000000,
             max: 200 * 0.00000001 * 100000000,
-            value: 0.00000001 * 100000000,
+            value: 0.00000008 * 100000000,
             orientation: "horizontal",
             range: "min",
-            create: function() {
+            create: function () {
                 $max_bet_amount.val(($(this).slider("value") / 100000000).toFixed(8));
             },
-            slide: function(event, ui) {
+            slide: function (event, ui) {
                 $max_bet_amount.val((ui.value / 100000000).toFixed(8));
             }
         }).addSliderSegments($max_bet_amount_slide.slider("option").max);
     }
-    $("#double-if-lost").bootstrapSwitch();
-
+    var $max_lost_slide = $("#max-lost-slide");
+    var $max_lost = $("#max-lost");
+    if ($max_lost_slide.length > 0) {
+        $max_lost_slide.slider({
+            min: 1,
+            max: 10,
+            value: 4,
+            orientation: "horizontal",
+            range: "min",
+            create: function () {
+                $max_lost.val($(this).slider("value"));
+            },
+            slide: function (event, ui) {
+                $max_lost.val(ui.value);
+            }
+        }).addSliderSegments($max_lost_slide.slider("option").max);
+    }
 
     var popup = {
         key: 'popup',
@@ -62,33 +77,90 @@ $.fn.addSliderSegments = function(amount, orientation) {
             popup: $('#customjs'),
             popupForm: $('#popup-form'),
             autoType: $('#auto-type'),
+            betAmountSlide: $("#bet-amount-slide"),
             betAmount: $('#bet-amount'),
-            doubleIfLost: $('#double-if-lost'),
+            maxBetAmountSlide: $("#max-bet-amount-slide"),
             maxBetAmount: $('#max-bet-amount'),
+            maxLostSlide: $("#max-lost-slide"),
+            maxLost: $('#max-lost'),
             saveBtn: $('#save-setting'),
+            hostSelect: $('#host'),
+        },
+        host: undefined,
+        emptyDataPattern: {
+            config: {
+                autoType: 0,
+                betAmount: 0.00000001,
+                maxBetAmount: 0.00000008,
+                maxLost: 4,
+            },
         },
         data: null,
         storage: {
-            data: {},
-            load: function() {
-                this._setData(JSON.parse(localStorage.getItem("bot-config") || "{}"));
+            data: {
+                private: {},
+                global: {}
             },
-            _getData: function() {
-                var storage = popup.storage;
-                return storage.data;
+            MODE: {
+                private: 1,
+                global: 2,
             },
-            _setData: function(data, key) {
-                var storage = popup.storage;
-                if (key) {
-                    storage.data[key] = data;
-                } else {
-                    storage.data = data;
+            setMode: function (mode) {
+                if (mode === this.MODE.private) {
+                    this.key = popup.key + "-" + popup.protocol + "//" + popup.host;
+                    this.mode = this.MODE.private;
+                }
+
+                if (mode === this.MODE.global) {
+                    this.key = popup.key;
+                    this.mode = this.MODE.global;
                 }
             },
-            get: function(key) {
-                return this._getData();
+            load: function () {
+                this.setMode(this.MODE.private);
+                this._setData(JSON.parse(localStorage.getItem(this.key) || "{}"));
+
+                this.setMode(this.MODE.global);
+                this._setData(JSON.parse(localStorage.getItem(this.key) || "{}"));
             },
-            set: function(arg1, arg2) {
+            _getData: function (key) {
+                var storage = popup.storage;
+                if (storage.mode == storage.MODE.private) {
+                    if (key) {
+                        return storage.data.private[key];
+                    } else {
+                        return storage.data.private;
+                    }
+                }
+                if (storage.mode == storage.MODE.global) {
+                    if (key) {
+                        return storage.data.global[key];
+                    } else {
+                        return storage.data.global;
+                    }
+                }
+            },
+            _setData: function (data, key) {
+                var storage = popup.storage;
+                if (storage.mode == storage.MODE.private) {
+                    if (key) {
+                        storage.data.private[key] = data;
+                    } else {
+                        storage.data.private = data;
+                    }
+                }
+                if (storage.mode == storage.MODE.global) {
+                    if (key) {
+                        storage.data.global[key] = data;
+                    } else {
+                        storage.data.global = data;
+                    }
+                }
+            },
+            get: function (key) {
+                return this._getData(key);
+            },
+            set: function (arg1, arg2) {
                 // arg1 is a key
                 if (typeof arg1 === 'string') {
                     this._setData(arg2, arg1);
@@ -99,9 +171,10 @@ $.fn.addSliderSegments = function(amount, orientation) {
                 }
 
                 var str = JSON.stringify(this._getData() || {});
-                localStorage.setItem("bot-config", str);
+                localStorage.setItem(this.key, str);
             },
-            remove: function(key) {
+
+            remove: function (key) {
                 if (key) {
                     var data = this._getData();
                     delete data[key];
@@ -110,66 +183,104 @@ $.fn.addSliderSegments = function(amount, orientation) {
                         this.remove();
                     } else {
                         var str = JSON.stringify(this._getData());
-                        localStorage.setItem("bot-config", str);
+                        localStorage.setItem(this.key, str);
                     }
                 } else {
-                    localStorage.removeItem("bot-config");
+                    localStorage.removeItem(this.key);
                     this._setData({});
                 }
             }
         },
-        applyData: function(data, notDraft) {
+        apiclb: {
+            onSelectedTab: function (tab) {
+                popup.tabId = tab.id;
+                chrome.tabs.sendRequest(popup.tabId, {
+                    method: "getData",
+                    reload: false
+                }, popup.apiclb.onGetData);
+            },
+            onGetData: function (response) {
+                if (!response || typeof response.host !== 'string') {
+                    window.close();
+                    return;
+                }
 
-            if (data && !notDraft) {
-                this.el.draftRemoveLink.removeClass('is-hidden');
-            }
+                popup.host = response.host;
+                popup.protocol = response.protocol;
+                // Load storage (global, local) IMPORTANT: Must be called first of all storage operations
+                popup.storage.load();
 
-            data = data || this.data;
+                // Set storage to store data accessible from all hosts
+                popup.storage.setMode(popup.storage.MODE.global);
 
-            // Default value for 'extra include'
-            if (!data.config.extra) {
-                data.config.extra = '# ' + popup.title.include.textarea + "\n";
-                popup.include.extra.forEach(function(url) {
-                    data.config.extra += '# ' + url + "\n";
+                var hosts = popup.storage.get('hosts') || [],
+                    url = popup.protocol + "//" + response.host;
+                // Add current host to list
+                if (hosts.indexOf(url) === -1) {
+                    hosts.push(url);
+                }
+
+                // Fill 'hosts select'
+                hosts.forEach(function (host) {
+                    var option = $('<option>' + host + '</option>');
+                    if (host === url) {
+                        option.attr('selected', 'selected');
+                    }
+                    popup.el.hostSelect.append(option);
                 });
+
+                // Store host (current included in array) if is customjs defined
+                if (response.customjs) {
+                    popup.storage.set('hosts', hosts);
+                }
+
+                // Set-up data pattern if empty
+                if (!popup.data) {
+                    popup.data = $.extend(true, {}, popup.emptyDataPattern);
+                }
+
+                // Merge host's data to defaults
+                popup.data = $.extend(popup.data, response.customjs);
+
+                // Set storage to store data accessible ONLY from current host
+                popup.storage.setMode(popup.storage.MODE.private);
+
+                // Save local copy of live data
+                if (response.customjs) {
+                    popup.storage.set('data', popup.data);
+                }
+
+                // Apply data
+                popup.applyData();
+
+                if (response.host !== 'freebitco.in') {
+                    window.close();
+                    return;
+                }
             }
-            // Readable format for 'extra include'
-            else {
-                data.config.extra = data.config.extra.replace(';', "\n");
-            }
-
-            // Default value for source
-            if (!data.source) {
-                data.source = popup.editor.defaultValue;
-            }
-
-            // Set 'predefined include' value
-            popup.el.includeSelect.val(data.config.include);
-
-            // Set enable checkbox
-            popup.el.enableCheck.prop('checked', data.config.enable);
-
-            // Fill 'extra include' textarea
-            popup.el.includeTextarea.val(data.config.extra);
-
-            // Apply source into editor
-            popup.editor.apply(data.source);
         },
-        getCurrentData: function() {
+        applyData: function (data) {
+            data = data || this.data;
+            console.log(data);
+            popup.el.autoType.val(data.config.autoType);
+            popup.el.betAmountSlide.slider("option", "value", data.config.betAmount * 100000000);
+            popup.el.betAmount.val(parseFloat(data.config.betAmount).toFixed(8));
+            popup.el.maxBetAmountSlide.slider("option", "value", data.config.maxBetAmount * 100000000);
+            popup.el.maxBetAmount.val(parseFloat(data.config.maxBetAmount).toFixed(8));
+            popup.el.maxLostSlide.slider("option", "value", data.config.maxLost);
+            popup.el.maxLost.val(data.config.maxLost);
+        },
+        getCurrentData: function () {
             return {
-                autoType: popup.el.autoType.val(),
-                betAmount: popup.el.betAmount.val(),
-                doubleIfLost: popup.el.betAmount.prop('checked'),
-                maxBetAmount: popup.el.maxBetAmount.val(),
+                config: {
+                    autoType: popup.el.autoType.val(),
+                    betAmount: popup.el.betAmount.val(),
+                    maxBetAmount: popup.el.maxBetAmount.val(),
+                    maxLost: popup.el.maxLost.val(),
+                }
             };
         },
-        removeDraft: function() {
-            popup.storage.remove('draft');
-
-            popup.applyData();
-            popup.el.draftRemoveLink.addClass('is-hidden');
-        },
-        save: function(e) {
+        save: function (e) {
             e.preventDefault();
 
             var data = popup.getCurrentData();
@@ -186,10 +297,8 @@ $.fn.addSliderSegments = function(amount, orientation) {
             });
 
             // Save local copy of data
+            popup.storage.setMode(popup.storage.MODE.private);
             popup.storage.set('data', popup.data);
-
-            // Clear draft
-            popup.removeDraft();
 
             // Close popup
             window.close();
@@ -197,5 +306,10 @@ $.fn.addSliderSegments = function(amount, orientation) {
             return false;
         },
     }
+    window.popup = popup;
+
+    chrome.tabs.getSelected(null, popup.apiclb.onSelectedTab);
+
+    popup.el.saveBtn.on('click', popup.save);
 
 })(jQuery);
